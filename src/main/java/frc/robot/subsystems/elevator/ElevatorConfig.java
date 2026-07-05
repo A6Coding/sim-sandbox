@@ -13,12 +13,12 @@ class ElevatorConfig {
 
     // Tune to find these!
     private static final Slot0Configs SLOT_0_CONFIGS = new Slot0Configs()
-            .withKP(0)
-            .withKI(0)
-            .withKD(0)
+            .withKP(20)
+            .withKI(1)
+            .withKD(5)
             .withKG(0)
-            .withKV(0)
-            .withKA(0)
+            .withKV(0.5)
+            .withKA(0.55)
             .withKS(0)
             .withGravityType(GravityTypeValue.Elevator_Static);
 
@@ -27,8 +27,8 @@ class ElevatorConfig {
             .withMotionMagic(
                     // Tune to find these!
                     new MotionMagicConfigs()
-                            .withMotionMagicCruiseVelocity(0)
-                            .withMotionMagicAcceleration(0)
+                            .withMotionMagicCruiseVelocity(1)
+                            .withMotionMagicAcceleration(2)
                             .withMotionMagicJerk(0))
             .withMotorOutput(new MotorOutputConfigs()
                     .withInverted(InvertedValue.CounterClockwise_Positive)

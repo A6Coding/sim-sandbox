@@ -25,7 +25,6 @@ public class ElevatorSubsystem extends SubsystemBase implements SimulatableMecha
         primaryElevatorMotor.getConfigurator().apply(ElevatorConfig.primaryTalonFXConfigs);
         secondaryElevatorMotor.getConfigurator().apply(ElevatorConfig.secondaryTalonFXConfigs);
         secondaryElevatorMotor.setControl(new Follower(ElevatorConfig.primaryElevatorMotorID, MotorAlignmentValue.Opposed));
-        new Trigger(this::getMagSwitch).debounce(2).onTrue(zeroPosition());
 
         primaryElevatorMotor.setPosition(0);
         secondaryElevatorMotor.setPosition(0);
@@ -46,11 +45,11 @@ public class ElevatorSubsystem extends SubsystemBase implements SimulatableMecha
         return Units.Rotations.of(primaryElevatorMotor.getClosedLoopReference().getValue());
     }
 
-    private Command zeroPosition() {
-        return runOnce(() -> primaryElevatorMotor.setPosition(0));
-    }
-
     public boolean getMagSwitch() {
         return !magSwitch.get();
+    }
+
+    public Command position() {
+        return runEnd(() -> primaryElevatorMotor.setControl(magicRequest.withPosition(2.7)), () -> primaryElevatorMotor.setControl(magicRequest.withPosition(0.1)));
     }
 }

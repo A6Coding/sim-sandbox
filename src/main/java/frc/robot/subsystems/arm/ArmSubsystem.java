@@ -4,13 +4,17 @@ import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.util.sim.PhysicsSim;
 import frc.robot.util.sim.SimulatableMechanism;
 
+@Logged
 public class ArmSubsystem extends SubsystemBase implements SimulatableMechanism {
     private final TalonFX armKraken = new TalonFX(ArmConfig.ARM_KRAKEN_ID, Constants.RIO_BUS);
     private final NeutralOut neutralOut = new NeutralOut();
@@ -21,6 +25,7 @@ public class ArmSubsystem extends SubsystemBase implements SimulatableMechanism 
     public ArmSubsystem() {
         armKraken.getConfigurator().apply(ArmConfig.talonFXConfiguration);
         armKraken.setControl(neutralOut);
+        armKraken.setNeutralMode(NeutralModeValue.Brake);
         armEncoder = new CANcoder(ArmConfig.ARM_CANCODER_ID);
         armEncoder.getConfigurator().apply(ArmConfig.cancoderConfiguration);
 
@@ -36,4 +41,17 @@ public class ArmSubsystem extends SubsystemBase implements SimulatableMechanism 
     public Angle getTargetPosition() {
         return Units.Rotations.of(armKraken.getClosedLoopReference().getValue());
     }
+
+    public Command left() {
+        return run(() -> armKraken.setControl(magicRequest.withPosition(0)));
+    }
+
+    public Command high() {
+        return run(() -> armKraken.setControl(magicRequest.withPosition(-0.5)));
+    }
+
+    public Command right() {
+        return run(() -> armKraken.setControl(magicRequest.withPosition(0.25)));
+    }
+
 }

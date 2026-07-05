@@ -11,6 +11,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -41,6 +42,7 @@ public class RobotContainer {
 
     // Pick Your Controller and Comment Out the Ones You Don't Use
     private final CommandJoystick joystick;
+    private final CommandXboxController primary;
     private final Mechanisms mechanisms;
     private final ElevatorSubsystem elevator;
     private final ArmSubsystem arm;
@@ -88,6 +90,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         joystick = new CommandJoystick(Constants.PRIMARY_JOYSTICK_PORT);
+        primary = new CommandXboxController(Constants.PRIMARY_XBOX_CONTROLLER_PORT);
         mechanisms = new Mechanisms();
         elevator = new ElevatorSubsystem();
         arm = new ArmSubsystem();
@@ -135,9 +138,16 @@ public class RobotContainer {
      */
     private void configureBindings() {
         drivetrain.setDefaultCommand(drivetrain.applyRequest(
-                () -> drive.withVelocityX(-joystick.getY() * TunerConstants.kSpeedAt12Volts.magnitude())
-                        .withVelocityY(-joystick.getX() * TunerConstants.kSpeedAt12Volts.magnitude())
-                        .withRotationalRate(-joystick.getTwist() * TunerConstants.MaFxAngularRate)));
+                () -> drive.withVelocityY(primary.getLeftX() * TunerConstants.kSpeedAt12Volts.magnitude())
+                        .withVelocityX(primary.getLeftY() * TunerConstants.kSpeedAt12Volts.magnitude())
+                        .withRotationalRate(-primary.getRightX() * TunerConstants.MaFxAngularRate)));
+
+        primary.button(2).onTrue(arm.left());
+        primary.button(3).onTrue(arm.right());
+        primary.button(4).multiPress(2, 1).onTrue(arm.high());
+        primary.button(1).toggleOnTrue(elevator.position());
+        primary.button(5).onTrue(wrist.setPosistion(1));
+        primary.button(6).onTrue(wrist.setPosistion(0));
     }
 
     /**
