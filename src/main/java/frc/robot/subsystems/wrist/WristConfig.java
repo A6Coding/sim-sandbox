@@ -14,12 +14,12 @@ class WristConfig {
 
     // Tune to find these!
     static final Slot0Configs SLOT_0_CONFIGS = new Slot0Configs()
-            .withKP(0)
-            .withKI(0)
-            .withKD(0)
+            .withKP(1.5)
+            .withKI(1)
+            .withKD(2)
             .withKS(0)
-            .withKV(0)
-            .withKA(0)
+            .withKV(0.05)
+            .withKA(0.990875)
             .withKG(0);
 
     static final FeedbackConfigs FEEDBACK_CONFIGS = new FeedbackConfigs()

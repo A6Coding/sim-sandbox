@@ -54,4 +54,20 @@ public class ArmSubsystem extends SubsystemBase implements SimulatableMechanism 
         return run(() -> armKraken.setControl(magicRequest.withPosition(0.25)));
     }
 
+    public Command autoOne() {
+        return runOnce(() -> armKraken.setControl(magicRequest.withPosition(1)));
+    }
+
+    public Command autoTwo() {
+        return runOnce(() -> armKraken.setControl(magicRequest.withPosition(1)));
+    }
+
+    public Command autoThree() {
+        return runOnce(() -> armKraken.setControl(magicRequest.withPosition(1)));
+    }
+
+    public Command autoFour() {
+        return runOnce(() -> armKraken.setControl(magicRequest.withPosition(1)));
+    }
+
 }

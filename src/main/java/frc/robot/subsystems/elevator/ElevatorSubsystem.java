@@ -1,5 +1,6 @@
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -51,5 +52,21 @@ public class ElevatorSubsystem extends SubsystemBase implements SimulatableMecha
 
     public Command position() {
         return runEnd(() -> primaryElevatorMotor.setControl(magicRequest.withPosition(2.7)), () -> primaryElevatorMotor.setControl(magicRequest.withPosition(0.1)));
+    }
+
+    public Command autoOne() {
+        return runOnce(() -> primaryElevatorMotor.setControl(magicRequest.withPosition(2.8)));
+    }
+
+    public Command autoTwo() {
+        return runOnce(() -> primaryElevatorMotor.setControl(magicRequest.withPosition(1.3)));
+    }
+
+    public Command autoThree() {
+        return runOnce(() -> primaryElevatorMotor.setControl(magicRequest.withPosition(2.8)));
+    }
+
+    public Command autoFour() {
+        return runOnce(() -> primaryElevatorMotor.setControl(magicRequest.withPosition(1.3)));
     }
 }

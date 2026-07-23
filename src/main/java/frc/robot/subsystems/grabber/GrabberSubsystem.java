@@ -4,7 +4,10 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.reduxrobotics.sensors.canandcolor.Canandcolor;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.wpilibj2.command.Command;
 
+import static edu.wpi.first.wpilibj2.command.Commands.runEnd;
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static frc.robot.constants.Constants.RIO_BUS;
 
 @Logged
@@ -36,4 +39,14 @@ public class GrabberSubsystem {
     public boolean doesNotHaveAlgae() {
         return false;
     }
+
+    public Command intake() {
+        return runEnd(()-> claw.setPosition(1), () -> claw.setPosition(0));
+    }
+
+    public Command autoIn() {
+        return runOnce(() -> claw.setPosition(1));
+    }
+
+    
 }

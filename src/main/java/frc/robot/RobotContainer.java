@@ -7,20 +7,25 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AutoCommands;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.TunerConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.grabber.GrabberSubsystem;
 import frc.robot.subsystems.vision.apriltag.AprilTagPose;
 import frc.robot.subsystems.vision.apriltag.AprilTagSubsystem;
 import frc.robot.subsystems.vision.apriltag.impl.photon.PhotonAprilTagSystem;
@@ -47,8 +52,11 @@ public class RobotContainer {
     private final ElevatorSubsystem elevator;
     private final ArmSubsystem arm;
     private final WristSubsystem wrist;
+    private final GrabberSubsystem grabber;
     public CommandSwerveDrivetrain drivetrain;
     private final AprilTagSubsystem[] aprilTagSubsystems;
+    private final SendableChooser<Command> autoChooser;
+
 
     @Logged(name = "Vision/RadioCam")
     public final PhotonAprilTagSystem radioCam;
@@ -95,7 +103,13 @@ public class RobotContainer {
         elevator = new ElevatorSubsystem();
         arm = new ArmSubsystem();
         wrist = new WristSubsystem();
+        grabber = new GrabberSubsystem();
         drivetrain = TunerConstants.createDrivetrain();
+        var autoCommands = new AutoCommands(drivetrain, arm, elevator, grabber);
+
+        autoChooser = autoCommands.buildAutoCommandChooser();
+        autoChooser.addOption("Two Ball", autoCommands.TwoBallAuto());
+        SmartDashboard.putData("Auto Chooser", autoChooser);
 
         radioCam = new PhotonAprilTagSystem("RadioCam", Constants.camTrans1, drivetrain);
         scoreCam = new PhotonAprilTagSystem("ScoreCam", Constants.camTrans2, drivetrain);
@@ -146,8 +160,8 @@ public class RobotContainer {
         primary.button(3).onTrue(arm.right());
         primary.button(4).multiPress(2, 1).onTrue(arm.high());
         primary.button(1).toggleOnTrue(elevator.position());
-        primary.button(5).onTrue(wrist.setPosistion(1));
-        primary.button(6).onTrue(wrist.setPosistion(0));
+        primary.button(5).toggleOnTrue(wrist.setPosition(1));
+        primary.button(6).whileTrue(grabber.intake());
     }
 
     /**
@@ -156,6 +170,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return null;
+        return autoChooser.getSelected();
     }
 }

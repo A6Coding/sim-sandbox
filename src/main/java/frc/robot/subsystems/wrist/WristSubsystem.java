@@ -1,5 +1,6 @@
 package frc.robot.subsystems.wrist;
 
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -13,7 +14,7 @@ import frc.robot.util.sim.SimulatableMechanism;
 public class WristSubsystem extends SubsystemBase implements SimulatableMechanism {
     private final TalonFX wristMotor = new TalonFX(WristConfig.WRIST_KRAKEN_ID);
     private final CANcoder wristEncoder = new CANcoder(WristConfig.WRIST_CANCODER_ID);
-    private final PositionVoltage motionRequest = new PositionVoltage(0).withSlot(0);
+    private final MotionMagicTorqueCurrentFOC magicRequest = new MotionMagicTorqueCurrentFOC(0).withSlot(0);
 
     public WristSubsystem() {
         wristMotor.getConfigurator().apply(WristConfig.wristMotorConfigs);
@@ -33,7 +34,7 @@ public class WristSubsystem extends SubsystemBase implements SimulatableMechanis
     }
 
 
-    public Command setPosistion(double position) {
-        return run(() -> wristMotor.setPosition(position));
+    public Command setPosition(double position) {
+        return runEnd(() -> wristMotor.setControl(magicRequest.withPosition(position)), () -> wristMotor.setControl(magicRequest.withPosition(0)));
     }
 }
